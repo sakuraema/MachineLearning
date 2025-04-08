@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Algorithms.h"
 #include <vector>
 
 class LinearRegression
@@ -10,7 +11,12 @@ public:
     double ComputeHypothesis(const std::vector<double>& x) const;
     double ComputeLoss(const std::vector<std::vector<double>>& X, const std::vector<double>& y) const;
     void ComputeGradients(const std::vector<std::vector<double>>& X, const std::vector<double>& y, std::vector<double>& dDeltaWeights, double& dDeltaBias) const;
-    void Fit(const std::vector<std::vector<double>>& X, const std::vector<double>& y);
+	void BatchGradientDescent(const std::vector<std::vector<double>>& X, const std::vector<double>& y);
+	void StochasticGradientDescent(const std::vector<std::vector<double>>& X, const std::vector<double>& y);
+	void MinibatchGradientDescent(const std::vector<std::vector<double>>& X, const std::vector<double>& y, int batchSize);
+	void NormalEquation(const std::vector<std::vector<double>>& X, const std::vector<double>& y);
+    void Train(AlgorithmType eType, const std::vector<std::vector<double>>& X, const std::vector<double>& y);
+	void Clear() { std::fill(m_dWeights.begin(), m_dWeights.end(), 0); m_dBias = 0.0; }
 
     inline std::vector<double> GetWeights() const { return m_dWeights; }
     inline double GetBias() const { return m_dBias; }
