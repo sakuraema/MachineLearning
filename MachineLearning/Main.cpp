@@ -17,7 +17,15 @@ int main()
     std::cout << "Final parameters:\n";
 	for (size_t i = 0; i < model.GetWeights().size(); ++i)
 		std::cout << "Weight " << i + 1 << ": " << model.GetWeights()[i] << "\n";
-    std::cout << "Bias: " << model.GetBias() << "\n";
+    std::cout << "Bias: " << model.GetBias() << "\n\n";
+
+    model.Clear();
+    model.Train(AlgorithmType::StochasticGradientDescent, X, y);
+    // Output results
+    std::cout << "Final parameters:\n";
+    for (size_t i = 0; i < model.GetWeights().size(); ++i)
+        std::cout << "Weight " << i + 1 << ": " << model.GetWeights()[i] << "\n";
+    std::cout << "Bias: " << model.GetBias() << "\n\n";
 
     model.Clear();
 	// Data has linear dependency, causing X^T*X to be singular
@@ -27,7 +35,7 @@ int main()
     std::cout << "Final parameters:\n";
     for (size_t i = 0; i < model.GetWeights().size(); ++i)
         std::cout << "Weight " << i + 1 << ": " << model.GetWeights()[i] << "\n";
-    std::cout << "Bias: " << model.GetBias() << "\n";
+    std::cout << "Bias: " << model.GetBias() << "\n\n";
 
     std::cin.get();
 

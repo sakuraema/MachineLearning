@@ -80,7 +80,46 @@ void LinearRegression::BatchGradientDescent(const std::vector<std::vector<double
 
 void LinearRegression::StochasticGradientDescent(const std::vector<std::vector<double>>& X, const std::vector<double>& y)
 {
-    std::cout << "Stochastic Gradient will be included in a future DLC update.\n";
+    const size_t n = X.size();
+    double dPreviousLoss = std::numeric_limits<double>::infinity();
+
+    for (int i = 0; i < m_iMaxIterations; ++i)
+    {
+        for (size_t j = 0; j < n; ++j)
+        {
+            // Compute gradients for a single sample
+            std::vector<double> dDeltaWeights(m_nFeatures, 0.0);
+            double dDeltaBias = 0.0;
+
+            double dError = ComputeHypothesis(X[j]) - y[j];
+            for (int k = 0; k < m_nFeatures; ++k)
+            {
+                dDeltaWeights[k] = dError * X[j][k];
+            }
+            dDeltaBias = dError;
+
+            // Update parameters
+            for (int k = 0; k < m_nFeatures; ++k)
+            {
+                m_dWeights[k] -= m_dLearningRate * dDeltaWeights[k];
+            }
+            m_dBias -= m_dLearningRate * dDeltaBias;
+        }
+
+        // Check convergence after each epoch
+        double dCurrentLoss = ComputeLoss(X, y);
+        if (fabs(dPreviousLoss - dCurrentLoss) < m_dTolerance)
+        {
+            std::cout << "Converged at iteration " << i << "\n";
+            break;
+        }
+        dPreviousLoss = dCurrentLoss;
+
+        if (i == m_iMaxIterations - 1)
+        {
+            std::cout << "Reached maximum iterations without convergence.\n";
+        }
+    }
 }
 
 void LinearRegression::MinibatchGradientDescent(const std::vector<std::vector<double>>& X, const std::vector<double>& y, int batchSize)
