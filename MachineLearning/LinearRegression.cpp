@@ -95,8 +95,10 @@ void LinearRegression::StochasticGradientDescent(const std::vector<std::vector<d
             for (int k = 0; k < m_nFeatures; ++k)
             {
                 dDeltaWeights[k] = dError * X[j][k];
+				dDeltaWeights[k] /= n; // Normalize by number of samples
             }
             dDeltaBias = dError;
+			dDeltaBias /= n; // Normalize by number of samples
 
             // Update parameters
             for (int k = 0; k < m_nFeatures; ++k)
