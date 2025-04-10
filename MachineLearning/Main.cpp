@@ -1,7 +1,4 @@
-#include <iostream>
-#include <vector>
-#include <cmath>
-#include <limits>
+#include "pch.h"
 
 #include "LinearRegression.h"
 

@@ -1,8 +1,6 @@
-﻿#include "LinearRegression.h"
-#include <iostream>
-#include <cmath>
-#include <limits>
-#include <Eigen/Dense>
+﻿#include "pch.h"
+
+#include "LinearRegression.h"
 
 LinearRegression::LinearRegression(int nFeatures, double dLearningRate, double dTolerance, int iMaxIterations)
     : m_dWeights(nFeatures, 0.0), m_dBias(0), m_dLearningRate(dLearningRate), m_dTolerance(dTolerance), m_iMaxIterations(iMaxIterations), m_nFeatures(nFeatures)
@@ -82,10 +80,12 @@ void LinearRegression::BatchGradientDescent(const std::vector<std::vector<double
 
 void LinearRegression::StochasticGradientDescent(const std::vector<std::vector<double>>& X, const std::vector<double>& y)
 {
+    std::cout << "Stochastic Gradient will be included in a future DLC update.\n";
 }
 
 void LinearRegression::MinibatchGradientDescent(const std::vector<std::vector<double>>& X, const std::vector<double>& y, int batchSize)
 {
+    std::cout << "Minibatch Gradient will be included in a future DLC update.\n";
 }
 
 void LinearRegression::NormalEquation(const std::vector<std::vector<double>>& X, const std::vector<double>& y)
