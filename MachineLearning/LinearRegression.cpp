@@ -95,10 +95,8 @@ void LinearRegression::StochasticGradientDescent(const std::vector<std::vector<d
             for (int k = 0; k < m_nFeatures; ++k)
             {
                 dDeltaWeights[k] = dError * X[j][k];
-				dDeltaWeights[k] /= n; // Normalize by number of samples
             }
             dDeltaBias = dError;
-			dDeltaBias /= n; // Normalize by number of samples
 
             // Update parameters
             for (int k = 0; k < m_nFeatures; ++k)
@@ -126,7 +124,58 @@ void LinearRegression::StochasticGradientDescent(const std::vector<std::vector<d
 
 void LinearRegression::MinibatchGradientDescent(const std::vector<std::vector<double>>& X, const std::vector<double>& y, int batchSize)
 {
-    std::cout << "Minibatch Gradient will be included in a future DLC update.\n";
+    const size_t n = X.size();
+    double dPreviousLoss = std::numeric_limits<double>::infinity();
+
+    for (int i = 0; i < m_iMaxIterations; ++i)
+    {
+        for (size_t start = 0; start < n; start += batchSize)
+        {
+            size_t end = std::min(start + batchSize, n);
+            std::vector<double> dDeltaWeights(m_nFeatures, 0.0);
+            double dDeltaBias = 0.0;
+
+            // Compute gradients for the minibatch
+            for (size_t j = start; j < end; ++j)
+            {
+                double dError = ComputeHypothesis(X[j]) - y[j];
+                for (int k = 0; k < m_nFeatures; ++k)
+                {
+                    dDeltaWeights[k] += dError * X[j][k];
+                }
+                dDeltaBias += dError;
+            }
+
+            // Normalize gradients by minibatch size
+            size_t batchSizeActual = end - start;
+            for (int k = 0; k < m_nFeatures; ++k)
+            {
+                dDeltaWeights[k] /= batchSizeActual;
+            }
+            dDeltaBias /= batchSizeActual;
+
+            // Update parameters
+            for (int k = 0; k < m_nFeatures; ++k)
+            {
+                m_dWeights[k] -= m_dLearningRate * dDeltaWeights[k];
+            }
+            m_dBias -= m_dLearningRate * dDeltaBias;
+        }
+
+        // Check convergence after each epoch
+        double dCurrentLoss = ComputeLoss(X, y);
+        if (fabs(dPreviousLoss - dCurrentLoss) < m_dTolerance)
+        {
+            std::cout << "Converged at iteration " << i << "\n";
+            break;
+        }
+        dPreviousLoss = dCurrentLoss;
+
+        if (i == m_iMaxIterations - 1)
+        {
+            std::cout << "Reached maximum iterations without convergence.\n";
+        }
+    }
 }
 
 void LinearRegression::NormalEquation(const std::vector<std::vector<double>>& X, const std::vector<double>& y)
