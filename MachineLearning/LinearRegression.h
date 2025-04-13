@@ -6,8 +6,16 @@
 class LinearRegression
 {
 public:
-    LinearRegression(int nFeatures, double dLearningRate = 0.01, double dTolerance = 1e-6, int iMaxIterations = 1000);
+    LinearRegression(double dLearningRate = 0.01, double dTolerance = 1e-6, int iMaxIterations = 1000);
 
+    void Train(AlgorithmType eType, int nFeatures, const std::vector<std::vector<double>>& X, const std::vector<double>& y);
+    std::vector<double> Predict(const std::vector<std::vector<double>>& X) const;
+	void Clear() { std::fill(m_dWeights.begin(), m_dWeights.end(), 0); m_dBias = 0.0; }
+
+    inline std::vector<double> GetWeights() const { return m_dWeights; }
+    inline double GetBias() const { return m_dBias; }
+
+private:
     double ComputeHypothesis(const std::vector<double>& x) const;
     double ComputeLoss(const std::vector<std::vector<double>>& X, const std::vector<double>& y) const;
     void ComputeGradients(const std::vector<std::vector<double>>& X, const std::vector<double>& y, std::vector<double>& dDeltaWeights, double& dDeltaBias) const;
@@ -15,11 +23,6 @@ public:
 	void StochasticGradientDescent(const std::vector<std::vector<double>>& X, const std::vector<double>& y);
 	void MinibatchGradientDescent(const std::vector<std::vector<double>>& X, const std::vector<double>& y, int batchSize);
 	void NormalEquation(const std::vector<std::vector<double>>& X, const std::vector<double>& y);
-    void Train(AlgorithmType eType, const std::vector<std::vector<double>>& X, const std::vector<double>& y);
-	void Clear() { std::fill(m_dWeights.begin(), m_dWeights.end(), 0); m_dBias = 0.0; }
-
-    inline std::vector<double> GetWeights() const { return m_dWeights; }
-    inline double GetBias() const { return m_dBias; }
 
 private:
     std::vector<double> m_dWeights;

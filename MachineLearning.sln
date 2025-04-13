@@ -4,22 +4,64 @@ VisualStudioVersion = 17.13.35919.96
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MachineLearning", "MachineLearning\MachineLearning.vcxproj", "{AA7B276C-32A5-461A-9B0E-28A13F4DC0D6}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConsoleTest", "ConsoleTest\ConsoleTest.vcxproj", "{96036D75-27A7-4183-BCEF-1BC8734A6D10}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PythonBindings", "PythonBindings\PythonBindings.vcxproj", "{9C89957A-7589-40CB-80E7-0197E0070603}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "PyCppMLViz", "PyCppMLViz\PyCppMLViz.pyproj", "{901AC31D-42BB-47D4-95CC-089604CE12FC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AA7B276C-32A5-461A-9B0E-28A13F4DC0D6}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{AA7B276C-32A5-461A-9B0E-28A13F4DC0D6}.Debug|Any CPU.Build.0 = Debug|x64
 		{AA7B276C-32A5-461A-9B0E-28A13F4DC0D6}.Debug|x64.ActiveCfg = Debug|x64
 		{AA7B276C-32A5-461A-9B0E-28A13F4DC0D6}.Debug|x64.Build.0 = Debug|x64
 		{AA7B276C-32A5-461A-9B0E-28A13F4DC0D6}.Debug|x86.ActiveCfg = Debug|Win32
 		{AA7B276C-32A5-461A-9B0E-28A13F4DC0D6}.Debug|x86.Build.0 = Debug|Win32
+		{AA7B276C-32A5-461A-9B0E-28A13F4DC0D6}.Release|Any CPU.ActiveCfg = Release|x64
+		{AA7B276C-32A5-461A-9B0E-28A13F4DC0D6}.Release|Any CPU.Build.0 = Release|x64
 		{AA7B276C-32A5-461A-9B0E-28A13F4DC0D6}.Release|x64.ActiveCfg = Release|x64
 		{AA7B276C-32A5-461A-9B0E-28A13F4DC0D6}.Release|x64.Build.0 = Release|x64
 		{AA7B276C-32A5-461A-9B0E-28A13F4DC0D6}.Release|x86.ActiveCfg = Release|Win32
 		{AA7B276C-32A5-461A-9B0E-28A13F4DC0D6}.Release|x86.Build.0 = Release|Win32
+		{96036D75-27A7-4183-BCEF-1BC8734A6D10}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{96036D75-27A7-4183-BCEF-1BC8734A6D10}.Debug|Any CPU.Build.0 = Debug|x64
+		{96036D75-27A7-4183-BCEF-1BC8734A6D10}.Debug|x64.ActiveCfg = Debug|x64
+		{96036D75-27A7-4183-BCEF-1BC8734A6D10}.Debug|x64.Build.0 = Debug|x64
+		{96036D75-27A7-4183-BCEF-1BC8734A6D10}.Debug|x86.ActiveCfg = Debug|Win32
+		{96036D75-27A7-4183-BCEF-1BC8734A6D10}.Debug|x86.Build.0 = Debug|Win32
+		{96036D75-27A7-4183-BCEF-1BC8734A6D10}.Release|Any CPU.ActiveCfg = Release|x64
+		{96036D75-27A7-4183-BCEF-1BC8734A6D10}.Release|Any CPU.Build.0 = Release|x64
+		{96036D75-27A7-4183-BCEF-1BC8734A6D10}.Release|x64.ActiveCfg = Release|x64
+		{96036D75-27A7-4183-BCEF-1BC8734A6D10}.Release|x64.Build.0 = Release|x64
+		{96036D75-27A7-4183-BCEF-1BC8734A6D10}.Release|x86.ActiveCfg = Release|Win32
+		{96036D75-27A7-4183-BCEF-1BC8734A6D10}.Release|x86.Build.0 = Release|Win32
+		{9C89957A-7589-40CB-80E7-0197E0070603}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{9C89957A-7589-40CB-80E7-0197E0070603}.Debug|Any CPU.Build.0 = Debug|x64
+		{9C89957A-7589-40CB-80E7-0197E0070603}.Debug|x64.ActiveCfg = Debug|x64
+		{9C89957A-7589-40CB-80E7-0197E0070603}.Debug|x64.Build.0 = Debug|x64
+		{9C89957A-7589-40CB-80E7-0197E0070603}.Debug|x86.ActiveCfg = Debug|Win32
+		{9C89957A-7589-40CB-80E7-0197E0070603}.Debug|x86.Build.0 = Debug|Win32
+		{9C89957A-7589-40CB-80E7-0197E0070603}.Release|Any CPU.ActiveCfg = Release|x64
+		{9C89957A-7589-40CB-80E7-0197E0070603}.Release|Any CPU.Build.0 = Release|x64
+		{9C89957A-7589-40CB-80E7-0197E0070603}.Release|x64.ActiveCfg = Release|x64
+		{9C89957A-7589-40CB-80E7-0197E0070603}.Release|x64.Build.0 = Release|x64
+		{9C89957A-7589-40CB-80E7-0197E0070603}.Release|x86.ActiveCfg = Release|Win32
+		{9C89957A-7589-40CB-80E7-0197E0070603}.Release|x86.Build.0 = Release|Win32
+		{901AC31D-42BB-47D4-95CC-089604CE12FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{901AC31D-42BB-47D4-95CC-089604CE12FC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{901AC31D-42BB-47D4-95CC-089604CE12FC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{901AC31D-42BB-47D4-95CC-089604CE12FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{901AC31D-42BB-47D4-95CC-089604CE12FC}.Release|x64.ActiveCfg = Release|Any CPU
+		{901AC31D-42BB-47D4-95CC-089604CE12FC}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

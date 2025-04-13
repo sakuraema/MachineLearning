@@ -2,9 +2,67 @@
 
 #include "LinearRegression.h"
 
-LinearRegression::LinearRegression(int nFeatures, double dLearningRate, double dTolerance, int iMaxIterations)
-    : m_dWeights(nFeatures, 0.0), m_dBias(0), m_dLearningRate(dLearningRate), m_dTolerance(dTolerance), m_iMaxIterations(iMaxIterations), m_nFeatures(nFeatures)
+LinearRegression::LinearRegression(double dLearningRate, double dTolerance, int iMaxIterations)
+	: m_dBias(0), m_dLearningRate(dLearningRate), m_dTolerance(dTolerance), m_iMaxIterations(iMaxIterations), m_nFeatures(0)
 {
+}
+
+void LinearRegression::Train(AlgorithmType eType, int nFeatures, const std::vector<std::vector<double>>& X, const std::vector<double>& y)
+{
+	m_nFeatures = nFeatures;
+
+    if (X.empty() || y.empty())
+    {
+        std::cerr << "Error: The input data X and y must not be empty.\n";
+        return;
+    }
+
+    if (X.size() != y.size())
+    {
+        std::cerr << "Error: The size of X and y must be the same.\n";
+        return;
+    }
+
+    if (m_nFeatures != X[0].size())
+    {
+        std::cerr << "Error: The number of features in X does not match the expected number.\n";
+        return;
+    }
+
+	m_dWeights.assign(m_nFeatures, 0.0);
+
+    switch (eType)
+    {
+    case AlgorithmType::BatchGradientDescent:
+        BatchGradientDescent(X, y);
+	    std::cout << "Batch Gradient Descent completed.\n";
+        break;
+    case AlgorithmType::StochasticGradientDescent:
+        StochasticGradientDescent(X, y);
+	    std::cout << "Stochastic Gradient Descent completed.\n";
+        break;
+    case AlgorithmType::MinibatchGradientDescent:
+    {
+        int nBatchSize = std::max(1, static_cast<int>(X.size() / 10)); // Set batch size to 10% of the sample size, minimum 1
+        MinibatchGradientDescent(X, y, nBatchSize);
+        std::cout << "Minibatch Gradient Descent completed with batch size: " << nBatchSize << "\n";
+        break;
+    }
+    case AlgorithmType::NormalEquation:
+        NormalEquation(X, y);
+	    std::cout << "Normal Equation completed.\n";
+        break;
+    default:
+        break;
+    }
+}
+
+std::vector<double> LinearRegression::Predict(const std::vector<std::vector<double>>& X) const
+{
+	std::vector<double> yPred(X.size(), 0.0);
+	for (size_t i = 0; i < X.size(); ++i)
+		yPred[i] = ComputeHypothesis(X[i]);
+	return yPred;
 }
 
 double LinearRegression::ComputeHypothesis(const std::vector<double>& x) const
@@ -199,50 +257,4 @@ void LinearRegression::NormalEquation(const std::vector<std::vector<double>>& X,
     m_dBias = weights(0); // First element is the bias
     for (int i = 0; i < m_nFeatures; ++i)
         m_dWeights[i] = weights(i + 1); // Remaining elements are the weights
-}
-
-void LinearRegression::Train(AlgorithmType eType, const std::vector<std::vector<double>>& X, const std::vector<double>& y)
-{
-   if (X.empty() || y.empty())
-   {
-       std::cerr << "Error: The input data X and y must not be empty.\n";
-       return;
-   }
-
-   if (X.size() != y.size())
-   {
-       std::cerr << "Error: The size of X and y must be the same.\n";
-       return;
-   }
-
-   if (m_nFeatures != X[0].size())
-   {
-       std::cerr << "Error: The number of features in X does not match the expected number.\n";
-       return;
-   }
-
-   switch (eType)
-   {
-   case AlgorithmType::BatchGradientDescent:
-       BatchGradientDescent(X, y);
-	   std::cout << "Batch Gradient Descent completed.\n";
-       break;
-   case AlgorithmType::StochasticGradientDescent:
-       StochasticGradientDescent(X, y);
-	   std::cout << "Stochastic Gradient Descent completed.\n";
-       break;
-   case AlgorithmType::MinibatchGradientDescent:
-   {
-       int nBatchSize = std::max(1, static_cast<int>(X.size() / 10)); // Set batch size to 10% of the sample size, minimum 1
-       MinibatchGradientDescent(X, y, nBatchSize);
-       std::cout << "Minibatch Gradient Descent completed with batch size: " << nBatchSize << "\n";
-       break;
-   }
-   case AlgorithmType::NormalEquation:
-       NormalEquation(X, y);
-	   std::cout << "Normal Equation completed.\n";
-       break;
-   default:
-       break;
-   }
 }
