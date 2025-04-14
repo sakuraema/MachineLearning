@@ -59,6 +59,18 @@ void LinearRegression::Train(AlgorithmType eType, int nFeatures, const std::vect
 
 std::vector<double> LinearRegression::Predict(const std::vector<std::vector<double>>& X) const
 {
+	if (X.size() == 0)
+	{
+		std::cerr << "Error: The input data X must not be empty.\n";
+		return {};
+	}
+
+	if (X[0].size() != m_nFeatures)
+	{
+		std::cerr << "Error: The number of features in X does not match the trained model.\n";
+		return {};
+	}
+
 	std::vector<double> yPred(X.size(), 0.0);
 	for (size_t i = 0; i < X.size(); ++i)
 		yPred[i] = ComputeHypothesis(X[i]);
@@ -85,6 +97,7 @@ double LinearRegression::ComputeLoss(const std::vector<std::vector<double>>& X, 
         double dLoss = dHypothesis - y[i];
         dTotalLoss += dLoss * dLoss;
     }
+
     return dTotalLoss / (2 * n);
 }
 
@@ -132,7 +145,7 @@ void LinearRegression::BatchGradientDescent(const std::vector<std::vector<double
         dPreviousLoss = dCurrentLoss;
 
         if (i == m_iMaxIterations - 1)
-            std::cout << "Reached maximum iterations without convergence.\n";
+            std::cout << "Reached maximum iterations without convergence (" + std::to_string(m_iMaxIterations) + ").\n";
     }
 }
 
@@ -151,16 +164,12 @@ void LinearRegression::StochasticGradientDescent(const std::vector<std::vector<d
 
             double dError = ComputeHypothesis(X[j]) - y[j];
             for (int k = 0; k < m_nFeatures; ++k)
-            {
                 dDeltaWeights[k] = dError * X[j][k];
-            }
             dDeltaBias = dError;
 
             // Update parameters
             for (int k = 0; k < m_nFeatures; ++k)
-            {
                 m_dWeights[k] -= m_dLearningRate * dDeltaWeights[k];
-            }
             m_dBias -= m_dLearningRate * dDeltaBias;
         }
 
@@ -174,9 +183,7 @@ void LinearRegression::StochasticGradientDescent(const std::vector<std::vector<d
         dPreviousLoss = dCurrentLoss;
 
         if (i == m_iMaxIterations - 1)
-        {
-            std::cout << "Reached maximum iterations without convergence.\n";
-        }
+            std::cout << "Reached maximum iterations without convergence (" + std::to_string(m_iMaxIterations) + ").\n";
     }
 }
 
@@ -230,9 +237,7 @@ void LinearRegression::MinibatchGradientDescent(const std::vector<std::vector<do
         dPreviousLoss = dCurrentLoss;
 
         if (i == m_iMaxIterations - 1)
-        {
-            std::cout << "Reached maximum iterations without convergence.\n";
-        }
+            std::cout << "Reached maximum iterations without convergence (" + std::to_string(m_iMaxIterations) + ").\n";
     }
 }
 

@@ -11,7 +11,7 @@ int main()
     std::vector<double> y = { 9, 14, 19, 24, 29 }; // 2*1 + 3*2 + 1 = 9, etc.
 
     // Create and train model
-    LinearRegression model(0.01, 1e-6, 10000);
+    LinearRegression model(0.01, 1e-6, 1000);
     model.Train(AlgorithmType::BatchGradientDescent, 2, X, y);
     // Output results
     std::cout << "Final parameters:\n";

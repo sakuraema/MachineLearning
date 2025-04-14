@@ -6,7 +6,7 @@
 class LinearRegression
 {
 public:
-    LinearRegression(double dLearningRate = 0.01, double dTolerance = 1e-6, int iMaxIterations = 1000);
+    LinearRegression(double dLearningRate = 0.01, double dTolerance = 1e-6, int iMaxIterations = 100000);
 
     void Train(AlgorithmType eType, int nFeatures, const std::vector<std::vector<double>>& X, const std::vector<double>& y);
     std::vector<double> Predict(const std::vector<std::vector<double>>& X) const;
