@@ -1,6 +1,7 @@
 import ml_cpp
 import numpy as np
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D  # Import 3D plotting module
 
 # Initialize C++ model
 model = ml_cpp.LinearRegression()
@@ -9,8 +10,12 @@ model = ml_cpp.LinearRegression()
 X_train = np.array([[1, 2], [2, 3], [3, 4]], dtype=np.double)
 y_train = np.array([5, 8, 11], dtype=np.double)
 
+# Test data
+X_test = np.array([[4, 5], [5, 6]], dtype=np.double)
+
 # Train the model for all algorithms and store results
 results = {}
+predictions = {}
 for algo in [
     ml_cpp.AlgorithmType.BatchGradientDescent,
     ml_cpp.AlgorithmType.StochasticGradientDescent,
@@ -21,42 +26,42 @@ for algo in [
     model.train(algo, 2, X_train.tolist(), y_train.tolist())
     weights = model.get_weights()
     bias = model.get_bias()
-    results[algo] = (weights, bias)  # Store weights and bias for each algorithm
+    y_test_pred = model.predict(X_test.tolist())  # Predict for X_test
+    results[algo] = (weights, bias)  # Store weights and bias
+    predictions[algo] = y_test_pred  # Store predictions for X_test
 
-# Plot the training data for Feature 1
-X_train_feature1 = X_train[:, 0]  # First feature
-plt.figure(figsize=(10, 5))
-plt.subplot(1, 2, 1)  # Create a subplot for Feature 1
-plt.scatter(X_train_feature1, y_train, color='blue', label='Training Data (Feature 1)')
+# 3D Plotting
+fig = plt.figure(figsize=(12, 10))
+for i, (algo, (weights, bias)) in enumerate(results.items(), start=1):
+    ax = fig.add_subplot(2, 2, i, projection='3d')  # Create a 3D subplot
 
-# Plot the best-fitting function for Feature 1
-X_line_feature1 = np.linspace(min(X_train_feature1), max(X_train_feature1), 100)
-for algo, (weights, bias) in results.items():
-    y_line = weights[0] * X_line_feature1 + bias  # Use the first feature's weight
-    plt.plot(X_line_feature1, y_line, label=str(algo).split('.')[-1])
+    # Plot the training data
+    ax.scatter(X_train[:, 0], X_train[:, 1], y_train, color='blue', label='Training Data')
 
-plt.title("Linear Regression (Feature 1)")
-plt.xlabel("Feature 1")
-plt.ylabel("Target")
-plt.legend()
+    # Plot the test data predictions
+    y_test_pred = predictions[algo]
+    ax.scatter(X_test[:, 0], X_test[:, 1], y_test_pred, color='green', label='Test Predictions')
 
-# Plot the training data for Feature 2
-X_train_feature2 = X_train[:, 1]  # Second feature
-plt.subplot(1, 2, 2)  # Create a subplot for Feature 2
-plt.scatter(X_train_feature2, y_train, color='blue', label='Training Data (Feature 2)')
+    # Create a grid for the plane
+    x1_min = min(np.min(X_train[:, 0]), np.min(X_test[:, 0]))
+    x1_max = max(np.max(X_train[:, 0]), np.max(X_test[:, 0]))
+    x2_min = min(np.min(X_train[:, 1]), np.min(X_test[:, 1]))
+    x2_max = max(np.max(X_train[:, 1]), np.max(X_test[:, 1]))
+    x1 = np.linspace(x1_min, x1_max, 10)
+    x2 = np.linspace(x2_min, x2_max, 10)
+    x1_grid, x2_grid = np.meshgrid(x1, x2)
+    y_grid = weights[0] * x1_grid + weights[1] * x2_grid + bias  # Hypothesis plane
 
-# Plot the best-fitting function for Feature 2
-X_line_feature2 = np.linspace(min(X_train_feature2), max(X_train_feature2), 100)
-for algo, (weights, bias) in results.items():
-    y_line = weights[1] * X_line_feature2 + bias  # Use the second feature's weight
-    plt.plot(X_line_feature2, y_line, label=str(algo).split('.')[-1])
+    # Plot the hypothesis plane
+    ax.plot_surface(x1_grid, x2_grid, y_grid, alpha=0.5, color='red', label='Hypothesis Plane')
 
-plt.title("Linear Regression (Feature 2)")
-plt.xlabel("Feature 2")
-plt.ylabel("Target")
-plt.legend()
+    ax.set_title(f"Hypothesis and Predictions ({str(algo).split('.')[-1]})")
+    ax.set_xlabel("Feature 1 (x1)")
+    ax.set_ylabel("Feature 2 (x2)")
+    ax.set_zlabel("Target (y)")
+    ax.legend()
 
 # Show the plots
 plt.tight_layout()
-plt.gcf().canvas.manager.set_window_title("Training Result (Feature 1 and Feature 2)")
+plt.gcf().canvas.manager.set_window_title("3D Hypothesis and Predictions for Each Algorithm")
 plt.show()
