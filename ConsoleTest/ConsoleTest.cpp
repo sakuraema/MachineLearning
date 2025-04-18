@@ -49,32 +49,33 @@ int main()
         std::cout << "Bias: " << model.GetBias() << "\n\n";
     }
 
-    // Sample training data (2 features)
-    std::vector<std::vector<double>> X = {
-        {2.0, 1.0},
-        {3.0, 1.5},
-        {4.0, 2.0},
-        {1.0, 0.5},
-        {1.5, 1.0},
-        {5.0, 2.5}
-    };
+    {
+        // Sample training data (2 features)
+        std::vector<std::vector<double>> X = {
+            {2.0, 1.0},
+            {3.0, 1.5},
+            {4.0, 2.0},
+            {1.0, 0.5},
+            {1.5, 1.0},
+            {5.0, 2.5}
+        };
 
-    // Corresponding labels (0 or 1)
-    std::vector<int> y = { 1, 1, 1, 0, 0, 1 };
+        // Corresponding labels (0 or 1)
+        std::vector<int> y = { 1, 1, 1, 0, 0, 1 };
 
-    // Create and train model
-    LogisticRegression model(0.01, 1000);
-    model.Train(X, y);
-    model.print_weights();
+        // Create and train model
+        LogisticRegression model(0.01, 1000);
+        model.Train(X, y);
 
-    // Test predictions
-    std::vector<double> test_sample1 = { 1.2, 0.8 };
-    std::vector<double> test_sample2 = { 3.5, 1.8 };
+        // Test predictions
+        std::vector<double> testSample1 = { 1.2, 0.8 };
+        std::vector<double> testSample2 = { 3.5, 1.8 };
 
-    std::cout << "Sample 1 prediction: " << model.Predict(test_sample1)
-        << " (probability: " << model.PredictProbability(test_sample1) << ")" << std::endl;
-    std::cout << "Sample 2 prediction: " << model.Predict(test_sample2)
-        << " (probability: " << model.PredictProbability(test_sample2) << ")" << std::endl;
+        std::cout << "Sample 1 prediction: " << model.Predict(testSample1)
+            << " (probability: " << model.PredictProbability(testSample1) << ")" << std::endl;
+        std::cout << "Sample 2 prediction: " << model.Predict(testSample2)
+            << " (probability: " << model.PredictProbability(testSample2) << ")" << std::endl;
+    }
 
     std::cin.get();
 }
