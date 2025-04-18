@@ -1,5 +1,4 @@
 ﻿#include "pch.h"
-
 #include "LinearRegression.h"
 
 LinearRegression::LinearRegression(double dLearningRate, double dTolerance, int iMaxIterations)

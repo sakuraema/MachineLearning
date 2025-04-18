@@ -6,4 +6,6 @@ enum class AlgorithmType
 	StochasticGradientDescent,
 	MinibatchGradientDescent,
 	NormalEquation,
-};
+	Sigmoid,
+	Softmax,
+	};
