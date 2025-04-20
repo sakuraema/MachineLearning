@@ -25,4 +25,5 @@ private:
     double m_dLearningRate;
     int m_nFeatures;
     int m_iMaxIterations;
+	int m_nClasses;
 };

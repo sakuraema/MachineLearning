@@ -71,10 +71,21 @@ int main()
         std::vector<double> testSample1 = { 1.2, 0.8 };
         std::vector<double> testSample2 = { 3.5, 1.8 };
 
-        std::cout << "Sample 1 prediction: " << model.Predict(testSample1)
-            << " (probability: " << model.PredictProbability(testSample1) << ")" << std::endl;
-        std::cout << "Sample 2 prediction: " << model.Predict(testSample2)
-            << " (probability: " << model.PredictProbability(testSample2) << ")" << std::endl;
+		std::cout << "Binary classification example:\n";
+        std::cout << "Sample 1 prediction: " << model.Predict(testSample1) << std::endl;
+        std::cout << "Sample 2 prediction: " << model.Predict(testSample2) << std::endl;
+        std::cout << std::endl;
+
+		// Multiclass example
+		y = { 0, 1, 2, 0, 1, 2 };
+        model.Clear();
+		model.Train(X, y);
+
+		// Test predictions
+		std::cout << "Multiclass classification example:\n";
+		std::cout << "Sample 1 prediction: " << model.Predict(testSample1) << std::endl;
+		std::cout << "Sample 2 prediction: " << model.Predict(testSample2) << std::endl;
+        std::cout << std::endl;
     }
 
     std::cin.get();
