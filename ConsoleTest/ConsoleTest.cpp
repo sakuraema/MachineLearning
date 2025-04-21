@@ -61,7 +61,7 @@ int main()
         };
 
         // Corresponding labels (0 or 1)
-        std::vector<int> y = { 1, 1, 1, 0, 0, 1 };
+        std::vector<double> y = { 1, 1, 1, 0, 0, 1 };
 
         // Create and train model
         LogisticRegression model(0.01, 1000);

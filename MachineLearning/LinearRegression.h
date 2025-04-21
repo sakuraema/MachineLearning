@@ -2,6 +2,7 @@
 
 #include "Algorithms.h"
 #include <vector>
+#include <Eigen/Dense>
 
 class LinearRegression
 {
@@ -17,12 +18,10 @@ public:
 
 private:
     double ComputeHypothesis(const std::vector<double>& x) const;
-    double ComputeLoss(const std::vector<std::vector<double>>& X, const std::vector<double>& y) const;
-    void ComputeGradients(const std::vector<std::vector<double>>& X, const std::vector<double>& y, std::vector<double>& dDeltaWeights, double& dDeltaBias) const;
-	void BatchGradientDescent(const std::vector<std::vector<double>>& X, const std::vector<double>& y);
-	void StochasticGradientDescent(const std::vector<std::vector<double>>& X, const std::vector<double>& y);
-	void MinibatchGradientDescent(const std::vector<std::vector<double>>& X, const std::vector<double>& y, int batchSize);
-	void NormalEquation(const std::vector<std::vector<double>>& X, const std::vector<double>& y);
+	void BatchGradientDescent(const Eigen::MatrixXd& X, const Eigen::VectorXd& y);
+	void StochasticGradientDescent(const Eigen::MatrixXd& X, const Eigen::VectorXd& y);
+	void MinibatchGradientDescent(const Eigen::MatrixXd& X, const Eigen::VectorXd& y, int batchSize);
+	void NormalEquation(const Eigen::MatrixXd& X, const Eigen::VectorXd& y);
 
 private:
     std::vector<double> m_dWeights;

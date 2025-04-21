@@ -29,26 +29,33 @@ void LinearRegression::Train(AlgorithmType eType, int nFeatures, const std::vect
     }
 
 	m_dWeights.assign(m_nFeatures, 0.0);
+    Eigen::MatrixXd X_eigen(X.size(), m_nFeatures);
+    for (size_t i = 0; i < X.size(); ++i)
+    {
+        for (size_t j = 0; j < m_nFeatures; ++j)
+            X_eigen(i, j) = X[i][j];
+    }
+    const Eigen::VectorXd y_eigen = Eigen::Map<const Eigen::VectorXd>(y.data(), y.size());
 
     switch (eType)
     {
     case AlgorithmType::BatchGradientDescent:
-        BatchGradientDescent(X, y);
+        BatchGradientDescent(X_eigen, y_eigen);
 	    std::cout << "Batch Gradient Descent completed.\n";
         break;
     case AlgorithmType::StochasticGradientDescent:
-        StochasticGradientDescent(X, y);
+        StochasticGradientDescent(X_eigen, y_eigen);
 	    std::cout << "Stochastic Gradient Descent completed.\n";
         break;
     case AlgorithmType::MinibatchGradientDescent:
     {
         int nBatchSize = std::max(1, static_cast<int>(X.size() / 10)); // Set batch size to 10% of the sample size, minimum 1
-        MinibatchGradientDescent(X, y, nBatchSize);
+        MinibatchGradientDescent(X_eigen, y_eigen, nBatchSize);
         std::cout << "Minibatch Gradient Descent completed with batch size: " << nBatchSize << "\n";
         break;
     }
     case AlgorithmType::NormalEquation:
-        NormalEquation(X, y);
+        NormalEquation(X_eigen, y_eigen);
 	    std::cout << "Normal Equation completed.\n";
         break;
     default:
@@ -78,64 +85,41 @@ std::vector<double> LinearRegression::Predict(const std::vector<std::vector<doub
 
 double LinearRegression::ComputeHypothesis(const std::vector<double>& x) const
 {
-    double dPredict = 0.0;
     // Hypothesis: h(x) = w1*x1 + w2*x2 + ... + wn*xn + b
-    for (int j = 0; j < m_nFeatures; ++j)
-        dPredict += m_dWeights[j] * x[j];
-    return dPredict + m_dBias;
+    double dPredict = m_dBias;
+	Eigen::VectorXd x_eigen = Eigen::Map<const Eigen::VectorXd>(x.data(), x.size());
+	Eigen::VectorXd dWeights_eigen = Eigen::Map<const Eigen::VectorXd>(m_dWeights.data(), m_dWeights.size());
+	dPredict += dWeights_eigen.dot(x_eigen);
+    return dPredict;
 }
 
-double LinearRegression::ComputeLoss(const std::vector<std::vector<double>>& X, const std::vector<double>& y) const
+void LinearRegression::BatchGradientDescent(const Eigen::MatrixXd& X, const Eigen::VectorXd& y)
 {
-    double dTotalLoss = 0.0;
-    const size_t n = X.size();
-    // Mean Squared Error loss: L(w, b) = (1/2n) * Σ(h(xi) - yi)^2
-    for (size_t i = 0; i < n; ++i)
-    {
-        double dHypothesis = ComputeHypothesis(X[i]);
-        double dLoss = dHypothesis - y[i];
-        dTotalLoss += dLoss * dLoss;
-    }
+    Eigen::VectorXd weights = Eigen::VectorXd::Zero(m_nFeatures);
+    double bias = m_dBias;
 
-    return dTotalLoss / (2 * n);
-}
-
-void LinearRegression::ComputeGradients(const std::vector<std::vector<double>>& X, const std::vector<double>& y, std::vector<double>& dDeltaWeights, double& dDeltaBias) const
-{
-    const size_t n = X.size();
-	// Griadient of the loss function: ∂L/∂w = (1/n) * Σ(h(xi) - yi) * xi
-    for (size_t i = 0; i < n; ++i)
-    {
-        double dError = ComputeHypothesis(X[i]) - y[i];
-        for (int j = 0; j < m_nFeatures; ++j)
-        {
-            dDeltaWeights[j] += dError * X[i][j];
-        }
-        dDeltaBias += dError;
-    }
-
-    for (int j = 0; j < m_nFeatures; ++j)
-		dDeltaWeights[j] /= n; // Normalize by number of samples
-    dDeltaBias /= n;
-}
-
-void LinearRegression::BatchGradientDescent(const std::vector<std::vector<double>>& X, const std::vector<double>& y)
-{
     double dPreviousLoss = std::numeric_limits<double>::infinity();
 
     for (int i = 0; i < m_iMaxIterations; ++i)
     {
-        std::vector<double> dDeltaWeights(m_nFeatures, 0.0);
-        double dDeltaBias = 0.0;
-        ComputeGradients(X, y, dDeltaWeights, dDeltaBias);
+        // Compute predictions: h(x) = X * weights + bias
+        Eigen::VectorXd predictions = X * weights + Eigen::VectorXd::Constant(X.rows(), bias);
+
+        // Compute errors: error = h(x) - y
+        Eigen::VectorXd errors = predictions - y;
+
+        // Compute gradients
+        Eigen::VectorXd gradientWeights = (X.transpose() * errors) / X.rows();
+        double gradientBias = errors.mean();
 
         // Update parameters
-        for (int j = 0; j < m_nFeatures; ++j)
-            m_dWeights[j] -= m_dLearningRate * dDeltaWeights[j];
-        m_dBias -= m_dLearningRate * dDeltaBias;
+        weights -= m_dLearningRate * gradientWeights;
+        bias -= m_dLearningRate * gradientBias;
+
+        // Compute loss
+        double dCurrentLoss = (errors.array().square().sum()) / (2 * X.rows());
 
         // Check convergence
-        double dCurrentLoss = ComputeLoss(X, y);
         if (fabs(dPreviousLoss - dCurrentLoss) < m_dTolerance)
         {
             std::cout << "Converged at iteration " << i << "\n";
@@ -146,34 +130,44 @@ void LinearRegression::BatchGradientDescent(const std::vector<std::vector<double
         if (i == m_iMaxIterations - 1)
             std::cout << "Reached maximum iterations without convergence (" + std::to_string(m_iMaxIterations) + ").\n";
     }
+
+    // Update the model's weights and bias
+    m_dWeights.assign(weights.data(), weights.data() + weights.size());
+    m_dBias = bias;
 }
 
-void LinearRegression::StochasticGradientDescent(const std::vector<std::vector<double>>& X, const std::vector<double>& y)
+void LinearRegression::StochasticGradientDescent(const Eigen::MatrixXd& X, const Eigen::VectorXd& y)
 {
-    const size_t n = X.size();
+    Eigen::VectorXd weights = Eigen::VectorXd::Zero(m_nFeatures);
+    double bias = m_dBias;
+
     double dPreviousLoss = std::numeric_limits<double>::infinity();
 
     for (int i = 0; i < m_iMaxIterations; ++i)
     {
-        for (size_t j = 0; j < n; ++j)
+        for (int j = 0; j < X.rows(); ++j)
         {
-            // Compute gradients for a single sample
-            std::vector<double> dDeltaWeights(m_nFeatures, 0.0);
-            double dDeltaBias = 0.0;
+            // Compute prediction for a single sample
+            double prediction = X.row(j).dot(weights) + bias;
 
-            double dError = ComputeHypothesis(X[j]) - y[j];
-            for (int k = 0; k < m_nFeatures; ++k)
-                dDeltaWeights[k] = dError * X[j][k];
-            dDeltaBias = dError;
+            // Compute error
+            double error = prediction - y(j);
+
+            // Compute gradients
+            Eigen::VectorXd gradientWeights = error * X.row(j).transpose();
+            double gradientBias = error;
 
             // Update parameters
-            for (int k = 0; k < m_nFeatures; ++k)
-                m_dWeights[k] -= m_dLearningRate * dDeltaWeights[k];
-            m_dBias -= m_dLearningRate * dDeltaBias;
+            weights -= m_dLearningRate * gradientWeights;
+            bias -= m_dLearningRate * gradientBias;
         }
 
-        // Check convergence after each epoch
-        double dCurrentLoss = ComputeLoss(X, y);
+        // Compute loss
+        Eigen::VectorXd predictions = X * weights + Eigen::VectorXd::Constant(X.rows(), bias);
+        Eigen::VectorXd errors = predictions - y;
+        double dCurrentLoss = (errors.array().square().sum()) / (2 * X.rows());
+
+        // Check convergence
         if (fabs(dPreviousLoss - dCurrentLoss) < m_dTolerance)
         {
             std::cout << "Converged at iteration " << i << "\n";
@@ -184,50 +178,48 @@ void LinearRegression::StochasticGradientDescent(const std::vector<std::vector<d
         if (i == m_iMaxIterations - 1)
             std::cout << "Reached maximum iterations without convergence (" + std::to_string(m_iMaxIterations) + ").\n";
     }
+
+    // Update the model's weights and bias
+    m_dWeights.assign(weights.data(), weights.data() + weights.size());
+    m_dBias = bias;
 }
 
-void LinearRegression::MinibatchGradientDescent(const std::vector<std::vector<double>>& X, const std::vector<double>& y, int batchSize)
+void LinearRegression::MinibatchGradientDescent(const Eigen::MatrixXd& X, const Eigen::VectorXd& y, int batchSize)
 {
-    const size_t n = X.size();
+    Eigen::VectorXd weights = Eigen::VectorXd::Zero(m_nFeatures);
+    double bias = m_dBias;
+
     double dPreviousLoss = std::numeric_limits<double>::infinity();
 
     for (int i = 0; i < m_iMaxIterations; ++i)
     {
-        for (size_t start = 0; start < n; start += batchSize)
+        for (int start = 0; start < X.rows(); start += batchSize)
         {
-            size_t end = std::min(start + batchSize, n);
-            std::vector<double> dDeltaWeights(m_nFeatures, 0.0);
-            double dDeltaBias = 0.0;
+            int end = std::min(start + batchSize, static_cast<int>(X.rows()));
+            Eigen::MatrixXd batchX = X.middleRows(start, end - start);
+            Eigen::VectorXd batchY = y.segment(start, end - start);
 
-            // Compute gradients for the minibatch
-            for (size_t j = start; j < end; ++j)
-            {
-                double dError = ComputeHypothesis(X[j]) - y[j];
-                for (int k = 0; k < m_nFeatures; ++k)
-                {
-                    dDeltaWeights[k] += dError * X[j][k];
-                }
-                dDeltaBias += dError;
-            }
+            // Compute predictions for the minibatch
+            Eigen::VectorXd predictions = batchX * weights + Eigen::VectorXd::Constant(batchX.rows(), bias);
 
-            // Normalize gradients by minibatch size
-            size_t batchSizeActual = end - start;
-            for (int k = 0; k < m_nFeatures; ++k)
-            {
-                dDeltaWeights[k] /= batchSizeActual;
-            }
-            dDeltaBias /= batchSizeActual;
+            // Compute errors
+            Eigen::VectorXd errors = predictions - batchY;
+
+            // Compute gradients
+            Eigen::VectorXd gradientWeights = (batchX.transpose() * errors) / batchX.rows();
+            double gradientBias = errors.mean();
 
             // Update parameters
-            for (int k = 0; k < m_nFeatures; ++k)
-            {
-                m_dWeights[k] -= m_dLearningRate * dDeltaWeights[k];
-            }
-            m_dBias -= m_dLearningRate * dDeltaBias;
+            weights -= m_dLearningRate * gradientWeights;
+            bias -= m_dLearningRate * gradientBias;
         }
 
-        // Check convergence after each epoch
-        double dCurrentLoss = ComputeLoss(X, y);
+        // Compute loss
+        Eigen::VectorXd predictions = X * weights + Eigen::VectorXd::Constant(X.rows(), bias);
+        Eigen::VectorXd errors = predictions - y;
+        double dCurrentLoss = (errors.array().square().sum()) / (2 * X.rows());
+
+        // Check convergence
         if (fabs(dPreviousLoss - dCurrentLoss) < m_dTolerance)
         {
             std::cout << "Converged at iteration " << i << "\n";
@@ -238,27 +230,23 @@ void LinearRegression::MinibatchGradientDescent(const std::vector<std::vector<do
         if (i == m_iMaxIterations - 1)
             std::cout << "Reached maximum iterations without convergence (" + std::to_string(m_iMaxIterations) + ").\n";
     }
+
+    // Update the model's weights and bias
+    m_dWeights.assign(weights.data(), weights.data() + weights.size());
+    m_dBias = bias;
 }
 
-void LinearRegression::NormalEquation(const std::vector<std::vector<double>>& X, const std::vector<double>& y)
+void LinearRegression::NormalEquation(const Eigen::MatrixXd& X, const Eigen::VectorXd& y)
 {
-    // Convert X and y to Eigen matrices
-    Eigen::MatrixXd matX(X.size(), X[0].size() + 1); // Add a column for the bias term
-    Eigen::VectorXd vecY(y.size());
-
-    for (size_t i = 0; i < X.size(); ++i)
-    {
-        matX(i, 0) = 1.0; // Bias term
-        for (size_t j = 0; j < X[0].size(); ++j)
-            matX(i, j + 1) = X[i][j];
-        vecY(i) = y[i];
-    }
+    // Add a column for the bias term
+    Eigen::MatrixXd matXWithBias(X.rows(), X.cols() + 1);
+    matXWithBias.col(0) = Eigen::VectorXd::Ones(X.rows()); // Bias term
+    matXWithBias.block(0, 1, X.rows(), X.cols()) = X;
 
     // Compute weights using the normal equation: w = (X^T * X)^(-1) * X^T * y
-    Eigen::VectorXd weights = (matX.transpose() * matX).ldlt().solve(matX.transpose() * vecY);
+    Eigen::VectorXd weights = (matXWithBias.transpose() * matXWithBias).ldlt().solve(matXWithBias.transpose() * y);
 
     // Update the model's weights and bias
     m_dBias = weights(0); // First element is the bias
-    for (int i = 0; i < m_nFeatures; ++i)
-        m_dWeights[i] = weights(i + 1); // Remaining elements are the weights
+    m_dWeights.assign(weights.data() + 1, weights.data() + weights.size()); // Remaining elements are the weights
 }

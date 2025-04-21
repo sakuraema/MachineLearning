@@ -88,7 +88,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)MachineLearning;$(SolutionDir)external\pybind11\include;$(LOCALAPPDATA)\Programs\Python\Python313\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)MachineLearning;$(SolutionDir)external\eigen;$(SolutionDir)external\pybind11\include;$(LOCALAPPDATA)\Programs\Python\Python313\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -110,7 +110,7 @@ rename "$(SolutionDir)PyCppMLViz\PythonBindings.dll" "ml_cpp.pyd"</Command>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)MachineLearning;$(SolutionDir)external\pybind11\include;$(LOCALAPPDATA)\Programs\Python\Python313\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)MachineLearning;$(SolutionDir)external\eigen;$(SolutionDir)external\pybind11\include;$(LOCALAPPDATA)\Programs\Python\Python313\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -132,7 +132,7 @@ rename "$(SolutionDir)PyCppMLViz\PythonBindings.dll" "ml_cpp.pyd"</Command>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)MachineLearning;$(SolutionDir)external\pybind11\include;$(LOCALAPPDATA)\Programs\Python\Python313\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)MachineLearning;$(SolutionDir)external\eigen;$(SolutionDir)external\pybind11\include;$(LOCALAPPDATA)\Programs\Python\Python313\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -154,7 +154,7 @@ rename "$(SolutionDir)PyCppMLViz\PythonBindings.dll" "ml_cpp.pyd"</Command>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)MachineLearning;$(SolutionDir)external\pybind11\include;$(LOCALAPPDATA)\Programs\Python\Python313\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)MachineLearning;$(SolutionDir)external\eigen;$(SolutionDir)external\pybind11\include;$(LOCALAPPDATA)\Programs\Python\Python313\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
