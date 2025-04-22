@@ -65,17 +65,8 @@ void LinearRegression::Train(AlgorithmType eType, int nFeatures, const std::vect
 
 std::vector<double> LinearRegression::Predict(const std::vector<std::vector<double>>& X) const
 {
-	if (X.size() == 0)
-	{
-		std::cerr << "Error: The input data X must not be empty.\n";
-		return {};
-	}
-
-	if (X[0].size() != m_nFeatures)
-	{
-		std::cerr << "Error: The number of features in X does not match the trained model.\n";
-		return {};
-	}
+    if (X.empty() || X[0].size() != m_nFeatures)
+        throw std::invalid_argument("Input dimensions do not match the number of features.");
 
 	std::vector<double> yPred(X.size(), 0.0);
 	for (size_t i = 0; i < X.size(); ++i)

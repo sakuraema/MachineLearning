@@ -6,9 +6,28 @@ LogisticRegression::LogisticRegression(double dLearningRate, int iMaxIterations)
 {
 }
 
-void LogisticRegression::Train(const std::vector<std::vector<double>>& X, const std::vector<double>& y)
+void LogisticRegression::Train(int nFeatures, const std::vector<std::vector<double>>& X, const std::vector<double>& y)
 {
-    m_nFeatures = X[0].size();
+    m_nFeatures = nFeatures;
+
+    if (X.empty() || y.empty())
+    {
+        std::cerr << "Error: The input data X and y must not be empty.\n";
+        return;
+    }
+
+    if (X.size() != y.size())
+    {
+        std::cerr << "Error: The size of X and y must be the same.\n";
+        return;
+    }
+
+    if (m_nFeatures != X[0].size())
+    {
+        std::cerr << "Error: The number of features in X does not match the expected number.\n";
+        return;
+    }
+
     m_dWeights.assign(m_nFeatures, 0.0);
     m_nClasses = *std::max_element(y.begin(), y.end()) + 1; // Determine the number of classes
 
@@ -37,18 +56,22 @@ void LogisticRegression::Train(const std::vector<std::vector<double>>& X, const 
     }
 }
 
-double LogisticRegression::PredictProbability(const std::vector<double>& x) const
+std::vector<int> LogisticRegression::Predict(const std::vector<std::vector<double>>& X) const
 {
-    Eigen::VectorXd x_eigen = Eigen::Map<const Eigen::VectorXd>(x.data(), x.size());
-    Eigen::VectorXd dWeights_eigen = Eigen::Map<const Eigen::VectorXd>(m_dWeights.data(), m_dWeights.size());
+    if (X.empty() || X[0].size() != m_nFeatures)
+        throw std::invalid_argument("Input dimensions do not match the number of features.");
 
-    double z = m_dBias + dWeights_eigen.dot(x_eigen);
-    return ComputeSigmoid(z);
-}
+    std::vector<int> predictions;
+    for (const auto& x : X)
+    {
+        Eigen::VectorXd x_eigen = Eigen::Map<const Eigen::VectorXd>(x.data(), x.size());
+        Eigen::VectorXd dWeights_eigen = Eigen::Map<const Eigen::VectorXd>(m_dWeights.data(), m_dWeights.size());
 
-int LogisticRegression::Predict(const std::vector<double>& x) const
-{
-    return PredictProbability(x) >= 0.5 ? 1 : 0;
+        double z = m_dBias + dWeights_eigen.dot(x_eigen);
+        predictions.push_back(ComputeSigmoid(z) >= 0.5 ? 1 : 0);
+    }
+
+    return predictions;
 }
 
 double LogisticRegression::ComputeSigmoid(double z) const

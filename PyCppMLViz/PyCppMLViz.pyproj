@@ -21,6 +21,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="PhishingEmailDetection.py" />
     <Compile Include="PyCppMLViz.py" />
     <Compile Include="RealEstatePrice.py">
       <SubType>Code</SubType>
